@@ -73,6 +73,12 @@ const moverZoom = (e: MouseEvent) => {
 
 const inicial = computed(() => (producto.value?.nombre || '?').charAt(0).toUpperCase());
 
+// Nombre bonito del color seleccionado (las variantes guardan código)
+const nombreColorSel = computed(() => {
+  const c = (producto.value?.coloresInfo || []).find((x: any) => x.valor === colorSel.value);
+  return c?.nombre || colorSel.value;
+});
+
 // Tallas disponibles para el color elegido (según stock por variante)
 const tallasDisponibles = computed(() => {
   const p = producto.value;
@@ -155,16 +161,16 @@ const agregarAlCarrito = () => {
         <!-- COLOR (puntitos elegantes) -->
         <div v-if="producto.colores?.length" class="mt-10">
           <p class="text-[11px] uppercase tracking-widest2 text-clay mb-3">
-            Color — <span class="text-ink">{{ colorSel }}</span>
+            Color — <span class="text-ink">{{ nombreColorSel }}</span>
           </p>
-          <div class="flex gap-3">
+          <div class="flex gap-3 flex-wrap">
             <button
               v-for="c in producto.coloresInfo"
-              :key="c.nombre"
-              @click="colorSel = c.nombre"
+              :key="c.valor"
+              @click="colorSel = c.valor"
               :title="c.nombre"
               class="w-8 h-8 rounded-full border transition-all duration-200"
-              :class="colorSel === c.nombre ? 'ring-2 ring-ink ring-offset-2 ring-offset-bone border-transparent' : 'border-sand hover:border-clay'"
+              :class="colorSel === c.valor ? 'ring-2 ring-ink ring-offset-2 ring-offset-bone border-transparent' : 'border-sand hover:border-clay'"
               :style="{ backgroundColor: c.hex || '#ccc' }"
             ></button>
           </div>
