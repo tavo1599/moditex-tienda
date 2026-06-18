@@ -42,14 +42,34 @@ watchEffect(() => {
   }
 });
 
-// Imagen mostrada: la del color seleccionado, o la principal
+// Imagen mostrada: la del color seleccionado, o la principal.
+// El match es tolerante (mayúsculas/acentos) por si el color de la foto y el de
+// la variante están escritos distinto.
+const norm = (s: any) => String(s ?? '').trim().toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const imagenActiva = computed(() => {
   const p = producto.value;
   if (!p) return null;
-  const porColor = p.imagenesPorColor?.[colorSel.value];
+  const mapa: Record<string, string[]> = p.imagenesPorColor || {};
+  let porColor = mapa[colorSel.value];
+  if (!porColor) {
+    const objetivo = norm(colorSel.value);
+    const k = Object.keys(mapa).find((key) => norm(key) === objetivo);
+    if (k) porColor = mapa[k];
+  }
   const ruta = (porColor && porColor[0]) || p.imagen || null;
   return imagen(ruta);
 });
+
+// --- Zoom de la imagen al pasar el mouse (sigue el cursor) ---
+const zoom = ref(false);
+const origenZoom = ref('50% 50%');
+const moverZoom = (e: MouseEvent) => {
+  const el = e.currentTarget as HTMLElement;
+  const r = el.getBoundingClientRect();
+  const x = ((e.clientX - r.left) / r.width) * 100;
+  const y = ((e.clientY - r.top) / r.height) * 100;
+  origenZoom.value = `${x}% ${y}%`;
+};
 
 const inicial = computed(() => (producto.value?.nombre || '?').charAt(0).toUpperCase());
 
@@ -99,15 +119,22 @@ const agregarAlCarrito = () => {
     <NuxtLink to="/tienda" class="text-[11px] uppercase tracking-widest2 text-clay hover:text-ink transition-colors">← Tienda</NuxtLink>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 mt-6">
-      <!-- IMAGEN GRANDE -->
-      <div class="relative aspect-[3/4] bg-sand overflow-hidden">
+      <!-- IMAGEN GRANDE (con zoom al pasar el mouse) -->
+      <div
+        class="relative aspect-[3/4] bg-sand overflow-hidden"
+        :class="imagenActiva ? 'cursor-zoom-in' : ''"
+        @mouseenter="zoom = true"
+        @mouseleave="zoom = false"
+        @mousemove="moverZoom"
+      >
         <transition name="fade" mode="out-in">
           <img
             v-if="imagenActiva"
             :key="imagenActiva"
             :src="imagenActiva"
             :alt="producto.nombre"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover transition-transform duration-200 ease-out"
+            :style="{ transform: zoom ? 'scale(2.2)' : 'scale(1)', transformOrigin: origenZoom }"
           />
           <div v-else class="w-full h-full flex items-center justify-center">
             <span class="text-8xl font-light text-clay/40">{{ inicial }}</span>

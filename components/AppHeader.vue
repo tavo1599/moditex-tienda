@@ -38,21 +38,21 @@ const toggleBuscador = async () => {
 <template>
   <header class="sticky top-0 z-40 bg-bone/80 backdrop-blur-md border-b border-sand">
     <div class="max-w-7xl mx-auto px-5 md:px-8 h-20 md:h-24 flex items-center justify-between">
-      <!-- Izquierda: navegación -->
-      <nav class="hidden md:flex items-center gap-7 flex-1 text-[11px] uppercase tracking-widest2 text-clay">
-        <NuxtLink to="/" class="hover:text-ink transition-colors">Inicio</NuxtLink>
-        <NuxtLink to="/tienda" class="hover:text-ink transition-colors">Tienda</NuxtLink>
-        <NuxtLink to="/catalogo" class="hover:text-ink transition-colors">Catálogo</NuxtLink>
+      <!-- Izquierda: navegación (puede encogerse sin invadir el logo) -->
+      <nav class="hidden md:flex items-center gap-6 flex-1 min-w-0 overflow-hidden text-[11px] uppercase tracking-widest2 text-clay">
+        <NuxtLink to="/" class="hover:text-ink transition-colors whitespace-nowrap">Inicio</NuxtLink>
+        <NuxtLink to="/tienda" class="hover:text-ink transition-colors whitespace-nowrap">Tienda</NuxtLink>
+        <NuxtLink to="/catalogo" class="hover:text-ink transition-colors whitespace-nowrap">Catálogo</NuxtLink>
         <NuxtLink
           v-for="c in (categorias || []).slice(0, 3)"
           :key="c"
           :to="`/tienda?categoria=${encodeURIComponent(c)}`"
-          class="hover:text-ink transition-colors"
+          class="hover:text-ink transition-colors whitespace-nowrap"
         >{{ c }}</NuxtLink>
       </nav>
 
-      <!-- Centro: arriba el wordmark elegante; al hacer scroll aparece el logo -->
-      <NuxtLink to="/" class="md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center justify-center min-h-[2.5rem]">
+      <!-- Centro: wordmark elegante / logo. shrink-0 = nunca lo tapan los lados -->
+      <NuxtLink to="/" class="shrink-0 px-3 flex items-center justify-center min-h-[2.5rem]">
         <transition name="brand" mode="out-in">
           <img
             v-if="logoUrl && scrolled"
