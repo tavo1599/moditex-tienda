@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bone text-ink antialiased;
+}
+
+/* Animación suave de aparición para secciones (al cargar) */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fadeUp 0.6s ease-out both;
+}
+
+/* Entradas al hacer scroll (directiva v-reveal). Empiezan ocultas y
+   se desplazan a su lugar cuando entran en pantalla. */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 0.7, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 0.7, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-up { transform: translateY(48px); }
+.reveal-down { transform: translateY(-48px); }   /* entra desde arriba */
+.reveal-left { transform: translateX(-64px); }    /* entra desde la izquierda */
+.reveal-right { transform: translateX(64px); }    /* entra desde la derecha */
+.reveal-zoom { transform: scale(0.94); }
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Accesibilidad: si el usuario pidió menos movimiento, no animamos */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none;
+  }
+}
+
+/* Transición entre páginas (fundido + leve desplazamiento) */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-active,
+  .page-leave-active { transition: none; }
+  .page-enter-from,
+  .page-leave-to { opacity: 1; transform: none; }
+}
