@@ -13,6 +13,9 @@ const onScroll = () => { scrolled.value = window.scrollY > 30; };
 onMounted(() => { window.addEventListener('scroll', onScroll, { passive: true }); onScroll(); });
 onUnmounted(() => window.removeEventListener('scroll', onScroll));
 
+// Desplegable de categorías
+const catAbierto = ref(false);
+
 // Buscador
 const router = useRouter();
 const mostrarBuscador = ref(false);
@@ -38,17 +41,38 @@ const toggleBuscador = async () => {
 <template>
   <header class="sticky top-0 z-40 bg-bone/80 backdrop-blur-md border-b border-sand">
     <div class="max-w-7xl mx-auto px-5 md:px-8 h-20 md:h-24 flex items-center justify-between">
-      <!-- Izquierda: navegación (puede encogerse sin invadir el logo) -->
-      <nav class="hidden md:flex items-center gap-6 flex-1 min-w-0 overflow-hidden text-[11px] uppercase tracking-widest2 text-clay">
+      <!-- Izquierda: navegación compacta (las categorías van en un desplegable) -->
+      <nav class="hidden md:flex items-center gap-6 flex-1 min-w-0 text-[11px] uppercase tracking-widest2 text-clay">
         <NuxtLink to="/" class="hover:text-ink transition-colors whitespace-nowrap">Inicio</NuxtLink>
         <NuxtLink to="/tienda" class="hover:text-ink transition-colors whitespace-nowrap">Tienda</NuxtLink>
         <NuxtLink to="/catalogo" class="hover:text-ink transition-colors whitespace-nowrap">Catálogo</NuxtLink>
-        <NuxtLink
-          v-for="c in (categorias || []).slice(0, 3)"
-          :key="c"
-          :to="`/tienda?categoria=${encodeURIComponent(c)}`"
-          class="hover:text-ink transition-colors whitespace-nowrap"
-        >{{ c }}</NuxtLink>
+
+        <!-- Desplegable de Categorías -->
+        <div
+          v-if="(categorias || []).length"
+          class="relative"
+          @mouseenter="catAbierto = true"
+          @mouseleave="catAbierto = false"
+        >
+          <button class="flex items-center gap-1 hover:text-ink transition-colors whitespace-nowrap uppercase tracking-widest2">
+            Categorías
+            <svg class="w-3 h-3 transition-transform" :class="{ 'rotate-180': catAbierto }" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </button>
+          <transition name="drop">
+            <!-- pt-3 mantiene el "puente" del hover sin cortar -->
+            <div v-if="catAbierto" class="absolute top-full left-0 pt-3 z-50">
+              <div class="bg-bone border border-sand rounded-lg shadow-xl py-2 min-w-[13rem] max-h-[70vh] overflow-y-auto">
+                <NuxtLink
+                  v-for="c in categorias"
+                  :key="c"
+                  :to="`/tienda?categoria=${encodeURIComponent(c)}`"
+                  @click="catAbierto = false"
+                  class="block px-4 py-2.5 text-[11px] uppercase tracking-widest2 text-clay hover:text-ink hover:bg-sand transition-colors whitespace-nowrap"
+                >{{ c }}</NuxtLink>
+              </div>
+            </div>
+          </transition>
+        </div>
       </nav>
 
       <!-- Centro: wordmark elegante / logo. shrink-0 = nunca lo tapan los lados -->
@@ -118,6 +142,10 @@ const toggleBuscador = async () => {
 <style scoped>
 .search-enter-active, .search-leave-active { transition: all 0.25s ease; }
 .search-enter-from, .search-leave-to { opacity: 0; transform: translateY(-8px); }
+
+/* Desplegable de categorías */
+.drop-enter-active, .drop-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.drop-enter-from, .drop-leave-to { opacity: 0; transform: translateY(-6px); }
 
 /* Cambio elegante entre el wordmark y el logo */
 .brand-enter-active, .brand-leave-active { transition: opacity 0.35s ease, transform 0.35s ease; }
