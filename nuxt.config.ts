@@ -14,12 +14,12 @@ export default defineNuxtConfig({
     // Transición suave (fundido) al navegar entre páginas
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
-      title: 'Essential West — Ropa a medida',
+      title: 'Essential West — Algodón pima para hombre',
       htmlAttrs: { lang: 'es' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Essential West — Prendas fabricadas a medida. Polos, polos box, buzos, joggers y más.' },
+        { name: 'description', content: 'Essential West — Clásicos para hombre en algodón pima premium. Polos, polos box, buzos, joggers y más.' },
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

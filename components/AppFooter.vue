@@ -11,7 +11,7 @@ const logoUrl = computed(() => imagen(props.config?.logo));
         <img v-if="logoUrl" :src="logoUrl" alt="Essential West" class="h-20 md:h-24 w-auto object-contain mb-2" />
         <p v-else class="text-2xl font-light tracking-[0.25em]">ESSENTIAL WEST</p>
         <p class="mt-4 text-sm text-clay leading-relaxed max-w-xs">
-          Prendas fabricadas a medida. Calidad textil de principio a fin.
+          Clásicos para hombre en algodón pima. Calidad textil de principio a fin.
         </p>
       </div>
 

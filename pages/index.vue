@@ -27,7 +27,7 @@ const bannerActivo = computed(() => (banners.value && banners.value.length ? ban
       <div class="absolute inset-0 bg-gradient-to-br from-sand via-bone to-sand"></div>
       <div class="relative max-w-7xl mx-auto px-5 md:px-8 w-full">
         <div class="max-w-xl fade-up">
-          <p class="text-[11px] uppercase tracking-widest2 text-clay mb-5">Colección textil a medida</p>
+          <p class="text-[11px] uppercase tracking-widest2 text-clay mb-5">Algodón pima · Clásicos para hombre</p>
           <h1 class="text-5xl md:text-7xl font-light leading-[1.05] tracking-tight">
             Prendas que<br />se sienten<br /><span class="italic">propias.</span>
           </h1>

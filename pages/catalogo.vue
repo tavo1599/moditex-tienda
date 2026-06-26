@@ -81,6 +81,11 @@ const anterior = () => pageFlip?.flipPrev();
                 <img v-if="imagen(p.imagen)" :src="imagen(p.imagen)!" :alt="p.nombre" />
                 <span v-else class="img-fallback">{{ (p.nombre || '?').charAt(0) }}</span>
                 <span v-if="!p.disponible" class="agotado">Agotado</span>
+                <!-- Tallas al costado -->
+                <div v-if="p.tallas && p.tallas.length" class="tallas-lateral">
+                  <span class="tallas-titulo">Tallas</span>
+                  <span v-for="t in p.tallas" :key="t" class="talla-chip">{{ t }}</span>
+                </div>
               </NuxtLink>
               <div class="prod-info">
                 <p v-if="p.categoria" class="text-[10px] uppercase tracking-widest2 text-clay mb-1">{{ p.categoria }}</p>
@@ -171,6 +176,38 @@ const anterior = () => pageFlip?.flipPrev();
   height: 100%;
   object-fit: cover;
   display: block;
+}
+/* Tallas en columna, al costado derecho de la foto */
+.tallas-lateral {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  z-index: 2;
+}
+.tallas-titulo {
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9a8f82;
+  margin-bottom: 0.1rem;
+}
+.talla-chip {
+  min-width: 1.4rem;
+  text-align: center;
+  background: rgba(247, 245, 242, 0.92);
+  border: 1px solid #e0dbd3;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #111;
+  padding: 0.18rem 0.3rem;
+  backdrop-filter: blur(2px);
 }
 .img-fallback {
   position: absolute;
