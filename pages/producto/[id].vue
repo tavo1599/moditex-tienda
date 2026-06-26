@@ -37,8 +37,11 @@ const tallaSel = ref<string>('');
 const agregado = ref(false);
 
 watchEffect(() => {
-  if (producto.value && !colorSel.value && producto.value.colores?.length) {
-    colorSel.value = producto.value.colores[0];
+  if (producto.value && !colorSel.value && producto.value.coloresInfo?.length) {
+    // Por defecto elegimos el primer color CON stock; si ninguno tiene, el primero
+    const info = producto.value.coloresInfo as any[];
+    const conStock = info.find((c) => c.disponible);
+    colorSel.value = (conStock || info[0]).valor;
   }
 });
 
@@ -167,12 +170,22 @@ const agregarAlCarrito = () => {
             <button
               v-for="c in producto.coloresInfo"
               :key="c.valor"
-              @click="colorSel = c.valor"
-              :title="c.nombre"
-              class="w-8 h-8 rounded-full border transition-all duration-200"
-              :class="colorSel === c.valor ? 'ring-2 ring-ink ring-offset-2 ring-offset-bone border-transparent' : 'border-sand hover:border-clay'"
+              @click="c.disponible && (colorSel = c.valor)"
+              :disabled="!c.disponible"
+              :title="c.disponible ? c.nombre : c.nombre + ' — sin stock'"
+              class="relative w-8 h-8 rounded-full border transition-all duration-200"
+              :class="[
+                colorSel === c.valor ? 'ring-2 ring-ink ring-offset-2 ring-offset-bone border-transparent' : 'border-sand hover:border-clay',
+                !c.disponible ? 'opacity-40 cursor-not-allowed' : ''
+              ]"
               :style="{ backgroundColor: c.hex || '#ccc' }"
-            ></button>
+            >
+              <!-- Tachado diagonal cuando no hay stock -->
+              <span
+                v-if="!c.disponible"
+                class="absolute left-1/2 top-1/2 w-10 h-[1.5px] bg-ink/70 -translate-x-1/2 -translate-y-1/2 rotate-45 pointer-events-none"
+              ></span>
+            </button>
           </div>
         </div>
 
