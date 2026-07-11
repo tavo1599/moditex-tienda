@@ -20,7 +20,7 @@ onBeforeUnmount(() => timer && clearInterval(timer));
 </script>
 
 <template>
-  <section class="relative h-[88vh] min-h-[560px] bg-sand overflow-hidden">
+  <section class="relative h-[68vh] min-h-[420px] md:h-[88vh] md:min-h-[560px] bg-sand overflow-hidden">
     <transition-group name="hero" tag="div">
       <div
         v-for="(s, i) in visibles"

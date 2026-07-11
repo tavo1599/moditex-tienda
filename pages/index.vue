@@ -23,7 +23,7 @@ const bannerActivo = computed(() => (banners.value && banners.value.length ? ban
     <!-- HERO: carrusel administrable; si no hay slides, hero estático -->
     <HeroCarrusel v-if="slides && slides.length" :slides="slides" />
 
-    <section v-else class="relative h-[88vh] min-h-[560px] bg-sand overflow-hidden flex items-center">
+    <section v-else class="relative h-[68vh] min-h-[420px] md:h-[88vh] md:min-h-[560px] bg-sand overflow-hidden flex items-center">
       <div class="absolute inset-0 bg-gradient-to-br from-sand via-bone to-sand"></div>
       <div class="relative max-w-7xl mx-auto px-5 md:px-8 w-full">
         <div class="max-w-xl fade-up">

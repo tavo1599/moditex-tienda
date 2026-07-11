@@ -10,6 +10,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Evita el scroll horizontal y el espacio en blanco a la derecha en móvil */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   @apply bg-bone text-ink antialiased;
 }
