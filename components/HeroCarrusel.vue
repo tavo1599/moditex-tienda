@@ -41,18 +41,18 @@ onBeforeUnmount(() => timer && clearInterval(timer));
           class="absolute inset-0 w-full h-full object-cover"
           :alt="s.titulo || 'Portada'"
         />
-        <!-- Velo para legibilidad del texto -->
-        <div class="absolute inset-0 bg-black/25"></div>
+        <!-- Velo para legibilidad del texto (un poco más para que resalte) -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/25 to-black/10"></div>
 
         <!-- Texto -->
         <div class="relative h-full max-w-7xl mx-auto px-5 md:px-8 flex items-center">
-          <div v-show="i === actual" :key="'txt-' + actual" class="max-w-xl text-bone">
-            <p v-if="s.subtitulo" class="hero-text-item text-[11px] uppercase tracking-widest2 mb-4 opacity-90">{{ s.subtitulo }}</p>
-            <h1 v-if="s.titulo" class="hero-text-item text-4xl md:text-6xl font-light leading-tight">{{ s.titulo }}</h1>
+          <div v-show="i === actual" :key="'txt-' + actual" class="max-w-xl text-bone hero-legible">
+            <p v-if="s.subtitulo" class="hero-text-item text-xs uppercase tracking-widest2 mb-4 font-bold">{{ s.subtitulo }}</p>
+            <h1 v-if="s.titulo" class="hero-text-item text-4xl md:text-6xl font-bold leading-tight">{{ s.titulo }}</h1>
             <NuxtLink
               v-if="s.enlace"
               :to="s.enlace"
-              class="hero-text-item inline-flex items-center gap-3 mt-8 border border-bone px-8 py-4 text-[11px] uppercase tracking-widest2 hover:bg-bone hover:text-ink transition-all duration-300"
+              class="hero-text-item inline-flex items-center gap-3 mt-8 border-2 border-bone px-8 py-4 text-[11px] uppercase tracking-widest2 font-bold hover:bg-bone hover:text-ink transition-all duration-300"
             >Ver más →</NuxtLink>
           </div>
         </div>
@@ -75,6 +75,11 @@ onBeforeUnmount(() => timer && clearInterval(timer));
 <style scoped>
 .hero-enter-active, .hero-leave-active { transition: opacity 0.8s ease; }
 .hero-enter-from, .hero-leave-to { opacity: 0; }
+
+/* Sombra sutil para que el texto se lea sobre cualquier foto */
+.hero-legible {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.5);
+}
 
 /* Entrada escalonada del texto del hero (desde arriba) */
 @keyframes heroIn {
