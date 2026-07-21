@@ -22,6 +22,8 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Essential West — Clásicos para hombre en algodón pima premium. Polos, polos box, buzos, joggers y más.' },
       ],
       link: [
+        // Ícono de la pestaña del navegador
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         // Tipografía fina/elegante para el estilo minimalista premium
