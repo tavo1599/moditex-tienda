@@ -15,12 +15,39 @@ const temporada = computed(() => {
   return `Temporada ${y}`;
 });
 
-onMounted(async () => {
-  const { PageFlip } = await import('page-flip');
+// --- Categorías y filtro ---
+const categoriaSel = ref<string>('');
+const categorias = computed(() => {
+  const set = new Set<string>();
+  for (const p of (productos.value || []) as any[]) if (p.categoria) set.add(p.categoria);
+  return [...set].sort((a, b) => a.localeCompare(b));
+});
+
+// Catálogo ordenado por categoría y luego por nombre de prenda
+const productosMostrados = computed(() => {
+  const lista = ((productos.value || []) as any[]).filter(
+    (p) => !categoriaSel.value || p.categoria === categoriaSel.value,
+  );
+  return [...lista].sort((a, b) => {
+    const c = String(a.categoria || '').localeCompare(String(b.categoria || ''));
+    return c !== 0 ? c : String(a.nombre || '').localeCompare(String(b.nombre || ''));
+  });
+});
+
+let PageFlipCls: any = null;
+
+const construirFlip = async () => {
+  if (!PageFlipCls) PageFlipCls = (await import('page-flip')).PageFlip;
   await nextTick();
   if (!flipEl.value) return;
 
-  pageFlip = new PageFlip(flipEl.value, {
+  // Si ya había un libro, lo destruimos para reconstruirlo con las hojas nuevas
+  try { pageFlip?.destroy?.(); } catch { /* ignore */ }
+  pageFlip = null;
+  listo.value = false;
+  paginaActual.value = 0;
+
+  pageFlip = new PageFlipCls(flipEl.value, {
     width: 440,
     height: 600,
     size: 'stretch',
@@ -39,7 +66,12 @@ onMounted(async () => {
   totalPaginas.value = pageFlip.getPageCount();
   pageFlip.on('flip', (e: any) => { paginaActual.value = e.data; });
   listo.value = true;
-});
+};
+
+onMounted(construirFlip);
+
+// Al cambiar el filtro, reconstruimos el libro con las prendas de esa categoría
+watch(categoriaSel, () => { construirFlip(); });
 
 onBeforeUnmount(() => {
   try { pageFlip?.destroy?.(); } catch { /* ignore */ }
@@ -56,6 +88,22 @@ const anterior = () => pageFlip?.flipPrev();
       <p class="text-[11px] uppercase tracking-widest2 text-clay mb-2">Catálogo virtual</p>
       <h1 class="font-display text-4xl md:text-5xl font-normal tracking-[0.08em] text-ink/90">Essential West</h1>
       <p class="text-[11px] uppercase tracking-widest2 text-clay mt-3">{{ temporada }}</p>
+    </div>
+
+    <!-- Filtro por tipo de prenda -->
+    <div v-if="categorias.length" class="flex flex-wrap justify-center gap-2 mb-8 max-w-3xl mx-auto">
+      <button
+        @click="categoriaSel = ''"
+        class="px-4 py-2 text-[11px] uppercase tracking-widest2 border rounded-full transition-colors"
+        :class="!categoriaSel ? 'bg-ink text-bone border-ink' : 'border-sand text-clay hover:border-ink hover:text-ink'"
+      >Todas</button>
+      <button
+        v-for="c in categorias"
+        :key="c"
+        @click="categoriaSel = c"
+        class="px-4 py-2 text-[11px] uppercase tracking-widest2 border rounded-full transition-colors"
+        :class="categoriaSel === c ? 'bg-ink text-bone border-ink' : 'border-sand text-clay hover:border-ink hover:text-ink'"
+      >{{ c }}</button>
     </div>
 
     <ClientOnly>
@@ -75,7 +123,7 @@ const anterior = () => pageFlip?.flipPrev();
           </div>
 
           <!-- PRODUCTOS -->
-          <div v-for="p in (productos || [])" :key="p.id" class="page">
+          <div v-for="p in productosMostrados" :key="p.id" class="page">
             <div class="page-content">
               <NuxtLink :to="`/producto/${p.id}`" class="prod-img">
                 <img v-if="imagen(p.imagen)" :src="imagen(p.imagen)!" :alt="p.nombre" />
@@ -91,6 +139,18 @@ const anterior = () => pageFlip?.flipPrev();
                 <p v-if="p.categoria" class="text-[10px] uppercase tracking-widest2 text-clay mb-1">{{ p.categoria }}</p>
                 <h3 class="text-lg font-light tracking-tight leading-tight">{{ p.nombre }}</h3>
                 <p class="text-base font-medium mt-1">S/ {{ p.precio.toFixed(2) }}</p>
+
+                <!-- Colores disponibles de ESTA prenda -->
+                <div v-if="p.colores && p.colores.length" class="colores-prenda">
+                  <span
+                    v-for="c in p.colores"
+                    :key="c.nombre"
+                    class="color-dot"
+                    :title="c.nombre"
+                    :style="{ backgroundColor: c.hex || '#ccc' }"
+                  ></span>
+                </div>
+
                 <NuxtLink :to="`/producto/${p.id}`" class="prod-btn">Ver prenda →</NuxtLink>
               </div>
             </div>
@@ -234,6 +294,22 @@ const anterior = () => pageFlip?.flipPrev();
   padding: 1rem 1.25rem 1.5rem;
   text-align: center;
 }
+/* Puntitos con los colores disponibles de la prenda */
+.colores-prenda {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-top: 0.55rem;
+}
+.color-dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid #d8d2c9;
+  display: inline-block;
+}
+
 .prod-btn {
   display: inline-block;
   margin-top: 0.9rem;
